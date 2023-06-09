@@ -1,3 +1,4 @@
+import random
 from typing import Callable
 
 import numpy as np
@@ -221,6 +222,10 @@ class Evolution:
     self.num_gens += 1
     best = self.population[np.argmax([t.fitness for t in self.population])]
     self.best_of_gens.append(deepcopy(best))
+    
+  def _calc_population_fitness(self) -> int:
+    fitness_sum = sum([t.fitness for t in self.population])
+    return fitness_sum / len(self.population)
 
   def evolve(self):
     """
@@ -240,6 +245,13 @@ class Evolution:
       self._perform_generation()
       # log info
       if self.verbose:
-        print("gen: {},\tbest of gen fitness: {:.3f},\tbest of gen size: {}".format(
-            self.num_gens, self.best_of_gens[-1].fitness, len(self.best_of_gens[-1])
+        print("Generation: {}".format(self.num_gens))
+        
+        # Best Solution
+        print("\tBest - \tFitness: {:.3f}, Size: {}".format(
+            self.best_of_gens[-1].fitness, len(self.best_of_gens[-1])
             ))
+                
+        # Average Fitness
+        fitness = self._calc_population_fitness()
+        print(f"\tPopulation - \tAverage Fitness: {fitness}")

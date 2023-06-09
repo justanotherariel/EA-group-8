@@ -1,3 +1,4 @@
+from collections import deque
 import numpy as np
 from genepro.node import Node
 import torch
@@ -37,7 +38,6 @@ class Minus(Node, nn.Module):
     c_outs = self._get_child_outputs_pt(X)
     return c_outs[0] - c_outs[1]
 
-
 class Times(Node, nn.Module):
   def __init__(self):
     super(Times,self).__init__()
@@ -54,7 +54,6 @@ class Times(Node, nn.Module):
   def get_output_pt(self, X):
     c_outs = self._get_child_outputs_pt(X)
     return torch.multiply(c_outs[0], c_outs[1])
-
 
 class Div(Node):
   def __init__(self):
@@ -81,8 +80,6 @@ class Div(Node):
     protected_div = sign_b * c_outs[0] / (1e-9 + torch.abs(c_outs[1]))
     return protected_div
 
-
-
 class Square(Node):
   def __init__(self):
     super(Square,self).__init__()
@@ -100,7 +97,6 @@ class Square(Node):
     c_outs = self._get_child_outputs_pt(X)
     return c_outs[0]**2
 
-
 class Cube(Node):
   def __init__(self):
     super(Cube,self).__init__()
@@ -114,6 +110,9 @@ class Cube(Node):
     c_outs = self._get_child_outputs(X)
     return np.multiply(np.square(c_outs[0]), c_outs[0])
 
+  def get_output_pt(self, X):
+    c_outs = self._get_child_outputs_pt(X)
+    return torch.multiply(torch.square(c_outs[0]), c_outs[0])
 
 class Sqrt(Node):
   def __init__(self):
@@ -133,7 +132,6 @@ class Sqrt(Node):
   def get_output_pt(self, X):
     c_outs = self._get_child_outputs_pt(X)
     return torch.sqrt(torch.abs(c_outs[0]))
-
 
 class Log(Node):
   def __init__(self):
@@ -156,7 +154,6 @@ class Log(Node):
     protected_log = torch.log(torch.abs(c_outs[0]) + 1e-9)
     return protected_log
 
-
 class Exp(Node):
   def __init__(self):
     super(Exp,self).__init__()
@@ -169,7 +166,10 @@ class Exp(Node):
   def get_output(self, X):
     c_outs = self._get_child_outputs(X)
     return np.exp(c_outs[0])
-
+  
+  def get_output_pt(self, X):
+    c_outs = self._get_child_outputs_pt(X)
+    return torch.exp(c_outs[0])
 
 class Sin(Node):
   def __init__(self):
@@ -188,7 +188,6 @@ class Sin(Node):
     c_outs = self._get_child_outputs_pt(X)
     return torch.sin(c_outs[0])
 
-
 class Cos(Node):
   def __init__(self):
     super(Cos,self).__init__()
@@ -206,7 +205,6 @@ class Cos(Node):
     c_outs = self._get_child_outputs_pt(X)
     return torch.cos(c_outs[0])
 
-
 class Max(Node):
   def __init__(self):
     super(Max,self).__init__()
@@ -223,7 +221,6 @@ class Max(Node):
   def get_output_pt(self, X):
     c_outs = self._get_child_outputs_pt(X)
     return torch.max(c_outs[0], c_outs[1])
-
 
 class Min(Node):
   def __init__(self):
@@ -257,7 +254,6 @@ class Feature(Node, nn.Module):
   
   def get_output_pt(self, X):
     return X[:,self.id]
-
 
 class Constant(Node, nn.Module):
   def __init__(self, value : float=None):
