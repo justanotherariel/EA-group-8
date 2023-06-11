@@ -1,0 +1,152 @@
+Generation: 1
+	Best - 	Fitness: -40.104, Size: 12
+	Population - 	Average Fitness: -203.01188362746947
+Generation: 2
+	Best - 	Fitness: -63.867, Size: 12
+	Population - 	Average Fitness: -280.5543034621891
+Generation: 3
+	Best - 	Fitness: -15.260, Size: 12
+	Population - 	Average Fitness: -152.96737454021317
+Generation: 4
+	Best - 	Fitness: -21.412, Size: 12
+	Population - 	Average Fitness: -215.44526833410362
+Generation: 5
+	Best - 	Fitness: -10.843, Size: 12
+	Population - 	Average Fitness: -183.037505891231
+Generation: 6
+	Best - 	Fitness: 16.942, Size: 12
+	Population - 	Average Fitness: -146.8869151757432
+Generation: 7
+	Best - 	Fitness: 5.334, Size: 20
+	Population - 	Average Fitness: -153.7981842262124
+Generation: 8
+	Best - 	Fitness: -41.157, Size: 15
+	Population - 	Average Fitness: -170.8065550989888
+Generation: 9
+	Best - 	Fitness: 0.648, Size: 27
+	Population - 	Average Fitness: -116.65236460651985
+Generation: 10
+	Best - 	Fitness: -12.144, Size: 24
+	Population - 	Average Fitness: -116.11911265906981
+Generation: 11
+	Best - 	Fitness: 11.910, Size: 22
+	Population - 	Average Fitness: -113.53214210389868
+Generation: 12
+	Best - 	Fitness: 53.564, Size: 23
+	Population - 	Average Fitness: -84.34189529455719
+Generation: 13
+	Best - 	Fitness: 45.759, Size: 23
+	Population - 	Average Fitness: -80.01534178151982
+Generation: 14
+	Best - 	Fitness: 9.708, Size: 29
+	Population - 	Average Fitness: -65.9952618529809
+Generation: 15
+	Best - 	Fitness: 0.208, Size: 22
+	Population - 	Average Fitness: -94.32039003899533
+Generation: 16
+	Best - 	Fitness: 68.791, Size: 26
+	Population - 	Average Fitness: -74.88027813936809
+Generation: 17
+	Best - 	Fitness: 82.007, Size: 26
+	Population - 	Average Fitness: -84.84188971010262
+Generation: 18
+	Best - 	Fitness: 119.192, Size: 23
+	Population - 	Average Fitness: -54.67626234999522
+Generation: 19
+	Best - 	Fitness: -22.797, Size: 31
+	Population - 	Average Fitness: -111.42579419923771
+Generation: 20
+	Best - 	Fitness: 78.930, Size: 23
+	Population - 	Average Fitness: -128.57193412857302
+Generation: 21
+	Best - 	Fitness: 12.846, Size: 22
+	Population - 	Average Fitness: -133.2058053771932
+Generation: 22
+	Best - 	Fitness: 60.500, Size: 31
+	Population - 	Average Fitness: -126.92332700813192
+Generation: 23
+	Best - 	Fitness: 63.418, Size: 23
+	Population - 	Average Fitness: -112.98628386139801
+Generation: 24
+	Best - 	Fitness: 40.791, Size: 23
+	Population - 	Average Fitness: -98.780710456604
+Generation: 25
+	Best - 	Fitness: 136.602, Size: 25
+	Population - 	Average Fitness: -45.301579464561435
+Generation: 26
+	Best - 	Fitness: 15.581, Size: 29
+	Population - 	Average Fitness: -112.07016694802866
+Generation: 27
+	Best - 	Fitness: 118.438, Size: 22
+	Population - 	Average Fitness: -98.35556705995215
+Generation: 28
+	Best - 	Fitness: 63.993, Size: 29
+	Population - 	Average Fitness: -90.4315883251147
+Generation: 29
+	Best - 	Fitness: -7.689, Size: 28
+	Population - 	Average Fitness: -124.4482542853891
+Generation: 30
+	Best - 	Fitness: -2.464, Size: 31
+	Population - 	Average Fitness: -107.35967318132526
+Generation: 31
+	Best - 	Fitness: 89.100, Size: 27
+	Population - 	Average Fitness: -49.52212870387175
+Generation: 32
+	Best - 	Fitness: 88.330, Size: 30
+	Population - 	Average Fitness: -24.808072240426483
+Generation: 33
+	Best - 	Fitness: 31.212, Size: 30
+	Population - 	Average Fitness: -85.63939573562531
+Generation: 34
+	Best - 	Fitness: 58.734, Size: 28
+	Population - 	Average Fitness: -46.97271739932825
+Generation: 35
+	Best - 	Fitness: 1.884, Size: 22
+	Population - 	Average Fitness: -113.82027463631843
+Generation: 36
+	Best - 	Fitness: 121.994, Size: 25
+	Population - 	Average Fitness: -56.462693161457935
+Generation: 37
+	Best - 	Fitness: 26.860, Size: 24
+	Population - 	Average Fitness: -109.55834478281893
+Generation: 38
+	Best - 	Fitness: -4.984, Size: 26
+	Population - 	Average Fitness: -98.70502050182655
+Generation: 39
+	Best - 	Fitness: -48.507, Size: 25
+	Population - 	Average Fitness: -137.38465485916012
+Generation: 40
+	Best - 	Fitness: 89.599, Size: 27
+	Population - 	Average Fitness: -64.48716390303777
+Generation: 41
+	Best - 	Fitness: 84.493, Size: 27
+	Population - 	Average Fitness: -31.15804834198805
+Generation: 42
+	Best - 	Fitness: 84.618, Size: 28
+	Population - 	Average Fitness: -42.66211404432485
+Generation: 43
+	Best - 	Fitness: 31.007, Size: 25
+	Population - 	Average Fitness: -113.50676324628203
+Generation: 44
+	Best - 	Fitness: 54.345, Size: 27
+	Population - 	Average Fitness: -44.15486587752284
+Generation: 45
+	Best - 	Fitness: 36.931, Size: 30
+	Population - 	Average Fitness: -45.962538322902475
+Generation: 46
+	Best - 	Fitness: 60.305, Size: 27
+	Population - 	Average Fitness: -59.26819604320754
+Generation: 47
+	Best - 	Fitness: 15.195, Size: 31
+	Population - 	Average Fitness: -94.49453052459573
+Generation: 48
+	Best - 	Fitness: 25.700, Size: 31
+	Population - 	Average Fitness: -55.81761690888746
+Generation: 49
+	Best - 	Fitness: 84.933, Size: 25
+	Population - 	Average Fitness: -73.45860153260725
+Last Generation - Thorough Eval
+Generation: 50
+	Best - 	Fitness: 17.200, Size: 31
+	Population - 	Average Fitness: -72.7951245372835
+
