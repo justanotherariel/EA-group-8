@@ -9,13 +9,13 @@ from genepro.multitree import Multitree
 from genepro.node import Node
 from genepro.node_impl import Constant
 
-def generate_random_multitree(n_trees : int, internal_nodes : list, leaf_nodes : list, max_depth : int):
+def generate_random_multitree(n_trees : int, internal_nodes : list, leaf_nodes : list, max_depth : int, full: bool = False):
   multitree = Multitree(n_trees)
   for _ in range(n_trees):
-    multitree.children.append(generate_random_tree(internal_nodes, leaf_nodes, max_depth, curr_depth=0))
+    multitree.children.append(generate_random_tree(internal_nodes, leaf_nodes, max_depth, curr_depth=0, full=full))
   return multitree
 
-def generate_random_tree(internal_nodes : list, leaf_nodes : list, max_depth : int, curr_depth : int=0):
+def generate_random_tree(internal_nodes : list, leaf_nodes : list, max_depth : int, curr_depth : int=0, full: bool = False):
   """
   Recursive method to generate a random tree containing the given types of nodes and up to the given maximum depth
 
@@ -29,6 +29,8 @@ def generate_random_tree(internal_nodes : list, leaf_nodes : list, max_depth : i
     maximum depth of the tree (recall that the root node has depth 0)
   curr_depth : int
     the current depth of the tree under construction, it is set by default to 0 so that calls to `generate_random_tree` need not specify it
+  full : bool
+    true to use full algorithm, false to use grow algorithm
 
   Returns
   -------
@@ -36,20 +38,20 @@ def generate_random_tree(internal_nodes : list, leaf_nodes : list, max_depth : i
     the root node of the generated tree
   """
 
-  # heuristic to generate a semi-normal centered on relatively large trees
-  prob_leaf = 0.01 + (curr_depth / max_depth)**3
-
-  if curr_depth == max_depth or randu() < prob_leaf:
+  if curr_depth == max_depth:
     n = deepcopy(randc(leaf_nodes))
   else:
-    n = deepcopy(randc(internal_nodes))
+    if full:
+      n = deepcopy(randc(internal_nodes))
+    else:
+      n = deepcopy(randc(internal_nodes + leaf_nodes))
 
   for _ in range(n.arity):
     c = generate_random_tree(internal_nodes, leaf_nodes, max_depth, curr_depth+1)
     n.insert_child(c)
-  
+
   n.get_readable_repr()
-  
+
   return n
 
 def subtree_crossover(multitree : Multitree, multidonor : Multitree, unif_depth : int=True) -> Multitree:
@@ -109,7 +111,7 @@ def node_level_crossover(multitree : Multitree, multidonor : Multitree, same_dep
   Returns
   -------
   Node
-    the tree after crossover 
+    the tree after crossover
   """
   r = np.random.randint(multitree.n_trees)
   tree = multitree.children[r]
@@ -159,12 +161,12 @@ def node_level_crossover(multitree : Multitree, multidonor : Multitree, same_dep
         tree = m
       for c in n._children:
         m.insert_child(c)
-  
+
   multitree.children[r] = tree
   return multitree
 
 
-def subtree_mutation(multitree : Multitree, internal_nodes : list, leaf_nodes : list, 
+def subtree_mutation(multitree : Multitree, internal_nodes : list, leaf_nodes : list,
   unif_depth : bool=True, max_depth : int=4, prob_leaf : float=0.25) -> Node:
   """
   Performs subtree mutation and returns the resulting offspring
@@ -207,7 +209,7 @@ def subtree_mutation(multitree : Multitree, internal_nodes : list, leaf_nodes : 
 
 def coeff_mutation(multitree : Multitree, prob_coeff_mut : float= 0.25, temp : float=0.25) -> Node:
   """
-  Applies random coefficient mutations to constant nodes 
+  Applies random coefficient mutations to constant nodes
 
   Parameters
   ----------
@@ -233,7 +235,7 @@ def coeff_mutation(multitree : Multitree, prob_coeff_mut : float= 0.25, temp : f
       # update the value by +- temp relative to current value
       new_v = v + temp*np.abs(v)*randn()
       c.set_value(new_v)
-  
+
   multitree.children[r] = tree
   return multitree
 
@@ -258,7 +260,7 @@ def __sample_node(tree : Node, unif_depth : bool=True) -> Node:
   if unif_depth:
     nodes = __sample_uniform_depth_nodes(nodes)
   return randc(nodes)
-  
+
 def __sample_uniform_depth_nodes(nodes : list) -> list:
   """
   Helper method for `__sample_node` that returns candidate nodes that all have a depth which was sampled uniformly at random
@@ -278,11 +280,11 @@ def __sample_uniform_depth_nodes(nodes : list) -> list:
   d = randc(possible_depths)
   candidates = [n for i, n in enumerate(nodes) if depths[i] == d]
   return candidates
-  
 
 
 
-def generate_offspring(parent : Node, 
+
+def generate_offspring(parent : Node,
   crossovers : list, mutations : list, coeff_opts : list,
   donors : list, internal_nodes : list, leaf_nodes : list,
   constraints : dict={"max_tree_size": 100}) -> Node:
@@ -326,7 +328,7 @@ def generate_offspring(parent : Node,
   shuffle(random_order)
   for i in random_order:
     var_op = all_var_ops[i]
-    offspring = __undergo_variation_operator(var_op, offspring, 
+    offspring = __undergo_variation_operator(var_op, offspring,
       crossovers, mutations, coeff_opts,
       randc(donors), internal_nodes, leaf_nodes)
     # check offspring meets constraints, else revert to backup
@@ -355,7 +357,7 @@ def __undergo_variation_operator(var_op : dict, offspring : Node,
     # we need a donor
     offspring = var_op_fun(offspring, donor, **var_op["kwargs"])
   elif var_op in mutations:
-    # we need to provide node types 
+    # we need to provide node types
     offspring = var_op_fun(offspring, internal_nodes, leaf_nodes, **var_op["kwargs"])
   elif var_op in coeff_opts:
     offspring = var_op_fun(offspring, **var_op["kwargs"])

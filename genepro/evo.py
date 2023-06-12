@@ -160,7 +160,7 @@ class Evolution:
     # initialize the population
     self.population = Parallel(n_jobs=self.n_jobs)(
         delayed(generate_random_multitree)(self.n_trees, 
-          self.internal_nodes, self.leaf_nodes, max_depth=self.init_max_depth )
+          self.internal_nodes, self.leaf_nodes, max_depth=randc(range(2, self.init_max_depth+1)), full=(randu() < 0.5))
         for _ in range(self.pop_size))
 
     for count, individual in enumerate(self.population):
