@@ -1,4 +1,8 @@
+import csv
+from datetime import datetime
+import os
 import random
+import shutil
 from typing import Callable
 
 import numpy as np
@@ -107,6 +111,7 @@ class Evolution:
     max_time : int=None,
     # other
     n_jobs : int=4,
+    log_data : bool=False,
     verbose : bool=False,
     ):
 
@@ -131,8 +136,10 @@ class Evolution:
     self.num_evals = 0
     self.start_time, self.elapsed_time = 0, 0
     self.best_of_gens = list()
-
     self.memory = None
+    
+    # Custom Variables
+    self.statistics = list()
 
 
   def _must_terminate(self) -> bool:
@@ -201,17 +208,18 @@ class Evolution:
       for t in parents)
 
     # evaluate each offspring and store its fitness 
-    fitnesses = Parallel(n_jobs=self.n_jobs)(delayed(self.fitness_function)(t, self.num_gens) for t in offspring_population)
-    fitnesses = list(map(list, zip(*fitnesses)))
-    memories = fitnesses[1]
+    fit_out = Parallel(n_jobs=self.n_jobs)(delayed(self.fitness_function)(t, self.num_gens) for t in offspring_population)
+    fit_out = list(map(list, zip(*fit_out)))
+    
+    memories = fit_out[1]
     memory = memories[0]
     for m in range(1,len(memories)):
       memory += memories[m]
-
     self.memory = memory + self.memory
 
-    fitnesses = fitnesses[0]
+    fitnesses = fit_out[0]
 
+    # Store fitnesses in individuals
     for i in range(self.pop_size):
       offspring_population[i].fitness = fitnesses[i]
     # store cost
@@ -222,6 +230,13 @@ class Evolution:
     self.num_gens += 1
     best = self.population[np.argmax([t.fitness for t in self.population])]
     self.best_of_gens.append(deepcopy(best))
+    
+    # Custom Data Collection
+    if self.log_data:
+      with open('fitnesses.csv','a') as file:
+        writer = csv.writer(file, delimiter='\t',lineterminator='\n',)
+        writer.writerow(fitnesses)
+    self.statistics.append({'mean':np.mean(fitnesses), 'median':np.median(fitnesses)})
     
   def _calc_population_fitness(self) -> int:
     fitness_sum = sum([t.fitness for t in self.population])
@@ -236,17 +251,36 @@ class Evolution:
     """
     # set the start time
     self.start_time = time.time()
-
     self._initialize_population()
+    
+    # Setup Data Collection
+    best_median = -np.inf
+    if self.log_data:
+      if os.path.exists("fitnesses.csv"):
+        os.remove("fitnesses.csv")
+      if os.path.exists("gen.csv"):
+        os.remove("gen.csv")
 
-    # generational loop
+
+    # Generational Loop
     while not self._must_terminate():
-      # perform one generation
       self._perform_generation()
+      
+      # Save Statistics of current gen
+      stats = self.statistics[self.num_gens - 1]  # Gens start at 1
+      if stats['median'] > best_median:
+        best_median = stats['median']
+      stats['best_median'] = best_median
+      
+      with open('gen.csv','a') as f1:
+        writer = csv.writer(f1, delimiter='\t',lineterminator='\n',)
+        writer.writerow([self.num_gens, self.best_of_gens[-1].fitness, len(self.best_of_gens[-1]),
+                          stats['median'], stats['best_median'], stats['mean']])
+
       # log info
       if self.verbose:
         print("Generation: {}".format(self.num_gens))
-        
+                
         # Best Solution
         print("\tBest - \tFitness: {:.3f}, Size: {}".format(
             self.best_of_gens[-1].fitness, len(self.best_of_gens[-1])
@@ -255,3 +289,11 @@ class Evolution:
         # Average Fitness
         fitness = self._calc_population_fitness()
         print(f"\tPopulation - \tAverage Fitness: {fitness}")
+        
+        print(f"\tmean = {stats['mean']:.2f}, \tmedian = {stats['median']:.2f}, \tbest_median = {stats['best_median']:.2f}\n")
+
+    # Once evolution is done, save the fitnesses to a permanent file including some model parameters on the last line
+    if self.log_data:
+      dt, _ = datetime.utcnow().strftime('%Y-%m-%d-%H:%M:%S.%f').split('.')
+      shutil.move('fitnesses.csv', 'fitnesses-'+dt+'.csv')
+      shutil.move('gen.csv', 'gen_'+dt+'.csv')
