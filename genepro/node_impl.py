@@ -4,6 +4,7 @@ from genepro.node import Node
 import torch
 import torch.nn as nn
 
+
 class Plus(Node, nn.Module):
   def __init__(self):
     super(Plus,self).__init__()
@@ -55,7 +56,7 @@ class Times(Node, nn.Module):
     c_outs = self._get_child_outputs_pt(X)
     return torch.multiply(c_outs[0], c_outs[1])
 
-class Div(Node):
+class Div(Node, nn.Module):
   def __init__(self):
     super(Div,self).__init__()
     self.arity = 2
@@ -80,7 +81,26 @@ class Div(Node):
     protected_div = sign_b * c_outs[0] / (1e-9 + torch.abs(c_outs[1]))
     return protected_div
 
-class Square(Node):
+class Reciprocal(Node, nn.Module):
+  def __init__(self):
+    super(Reciprocal,self).__init__()
+    self.arity = 1
+    self.symb = '1/'
+
+  def _get_args_repr(self, args):
+    return self._get_typical_repr(args,'after')
+
+  def get_output(self, X):
+    c_outs = self._get_child_outputs(X)
+    # implements a protection to avoid dividing by 0
+    return np.sign(c_outs[0]) / (1e-9 + np.abs(c_outs[0]))
+
+  def get_output_pt(self, X):
+    c_outs = self._get_child_outputs_pt(X)
+    # implements a protection to avoid dividing by 0
+    return torch.sign(c_outs[0]) / (1e-9 + torch.abs(c_outs[0]))
+
+class Square(Node, nn.Module):
   def __init__(self):
     super(Square,self).__init__()
     self.arity = 1
@@ -95,9 +115,9 @@ class Square(Node):
 
   def get_output_pt(self, X):
     c_outs = self._get_child_outputs_pt(X)
-    return c_outs[0]**2
+    return torch.pow(c_outs[0], 2)
 
-class Cube(Node):
+class Cube(Node, nn.Module):
   def __init__(self):
     super(Cube,self).__init__()
     self.arity = 1
@@ -108,13 +128,13 @@ class Cube(Node):
 
   def get_output(self, X):
     c_outs = self._get_child_outputs(X)
-    return np.multiply(np.square(c_outs[0]), c_outs[0])
+    return np.power(c_outs[0], 3)
 
   def get_output_pt(self, X):
     c_outs = self._get_child_outputs_pt(X)
-    return torch.multiply(torch.square(c_outs[0]), c_outs[0])
+    return torch.pow(c_outs[0], 3)
 
-class Sqrt(Node):
+class Sqrt(Node, nn.Module):
   def __init__(self):
     super(Sqrt,self).__init__()
     self.arity = 1
@@ -133,7 +153,7 @@ class Sqrt(Node):
     c_outs = self._get_child_outputs_pt(X)
     return torch.sqrt(torch.abs(c_outs[0]))
 
-class Log(Node):
+class Log(Node, nn.Module):
   def __init__(self):
     super(Log,self).__init__()
     self.arity = 1
@@ -154,7 +174,7 @@ class Log(Node):
     protected_log = torch.log(torch.abs(c_outs[0]) + 1e-9)
     return protected_log
 
-class Exp(Node):
+class Exp(Node, nn.Module):
   def __init__(self):
     super(Exp,self).__init__()
     self.arity = 1
@@ -171,7 +191,7 @@ class Exp(Node):
     c_outs = self._get_child_outputs_pt(X)
     return torch.exp(c_outs[0])
 
-class Sin(Node):
+class Sin(Node, nn.Module):
   def __init__(self):
     super(Sin,self).__init__()
     self.arity = 1
@@ -188,7 +208,7 @@ class Sin(Node):
     c_outs = self._get_child_outputs_pt(X)
     return torch.sin(c_outs[0])
 
-class Cos(Node):
+class Cos(Node, nn.Module):
   def __init__(self):
     super(Cos,self).__init__()
     self.arity = 1
@@ -205,7 +225,7 @@ class Cos(Node):
     c_outs = self._get_child_outputs_pt(X)
     return torch.cos(c_outs[0])
 
-class Max(Node):
+class Max(Node, nn.Module):
   def __init__(self):
     super(Max,self).__init__()
     self.arity = 2
@@ -222,7 +242,7 @@ class Max(Node):
     c_outs = self._get_child_outputs_pt(X)
     return torch.max(c_outs[0], c_outs[1])
 
-class Min(Node):
+class Min(Node, nn.Module):
   def __init__(self):
     super(Min,self).__init__()
     self.arity = 2
@@ -238,6 +258,91 @@ class Min(Node):
   def get_output_pt(self, X):
     c_outs = self._get_child_outputs_pt(X)
     return torch.min(c_outs[0], c_outs[1])
+
+class Abs(Node, nn.Module):
+  def __init__(self):
+    super(Abs,self).__init__()
+    self.arity = 1
+    self.symb = "abs"
+
+  def _get_args_repr(self, args):
+    return self._get_typical_repr(args,"before")
+
+  def get_output(self, X):
+    c_outs = self._get_child_outputs(X)
+    return np.absolute(c_outs[0])
+
+  def get_output_pt(self, X):
+    c_outs = self._get_child_outputs_pt(X)
+    return torch.absolute(c_outs[0])
+
+class HyperbolicTangent(Node, nn.Module):
+  def __init__(self):
+    super(HyperbolicTangent,self).__init__()
+    self.arity = 1
+    self.symb = "tanh"
+
+  def _get_args_repr(self, args):
+    return self._get_typical_repr(args,"before")
+
+  def get_output(self, X):
+    c_outs = self._get_child_outputs(X)
+    return np.tanh(c_outs[0])
+
+  def get_output_pt(self, X):
+    c_outs = self._get_child_outputs_pt(X)
+    return torch.tanh(c_outs[0])
+
+class Sigmoid(Node, nn.Module):
+  def __init__(self):
+    super(Sigmoid,self).__init__()
+    self.arity = 1
+    self.symb = "abs"
+
+  def _get_args_repr(self, args):
+    return self._get_typical_repr(args,"before")
+
+  def get_output(self, X):
+    c_outs = self._get_child_outputs(X)
+    return 1/(1 + np.exp(-c_outs[0]))
+
+  def get_output_pt(self, X):
+    c_outs = self._get_child_outputs_pt(X)
+    return 1/(1 + torch.exp(-c_outs[0]))
+
+class MeanOfTwo(Node, nn.Module):
+  def __init__(self):
+    super(MeanOfTwo,self).__init__()
+    self.arity = 2
+    self.symb = "mean"
+
+  def _get_args_repr(self, args):
+    return self._get_typical_repr(args,"before")
+
+  def get_output(self, X):
+    c_outs = self._get_child_outputs(X)
+    return np.average(c_outs)
+
+  def get_output_pt(self, X):
+    c_outs = self._get_child_outputs_pt(X)
+    return torch.mean(torch.tensor(c_outs))
+
+class MeanOfThree(Node, nn.Module):
+  def __init__(self):
+    super(MeanOfThree,self).__init__()
+    self.arity = 3
+    self.symb = "mean"
+
+  def _get_args_repr(self, args):
+    return self._get_typical_repr(args,"before")
+
+  def get_output(self, X):
+    c_outs = self._get_child_outputs(X)
+    return np.average(c_outs)
+
+  def get_output_pt(self, X):
+    c_outs = self._get_child_outputs_pt(X)
+    return torch.mean(c_outs)
 
 class Feature(Node, nn.Module):
   def __init__(self,id):
@@ -299,3 +404,55 @@ class Constant(Node, nn.Module):
     self.__value = value   
     self.symb = str(value)
     self.pt_value = torch.tensor([self.__value],requires_grad=True)
+
+# Constant values
+class Pi(Node, nn.Module):
+  def __init__(self):
+    super(Pi,self).__init__()
+    self.arity = 0
+    self.value = np.pi
+    self.pt_value = torch.acos(torch.zeros(1)) * 2
+    self.symb = "π"
+
+  def _get_args_repr(self, args):
+    return self.symb
+
+  def get_output(self, X):
+    return self.value
+
+  def get_output_pt(self, X):
+    return self.pt_value
+
+class E(Node, nn.Module):
+  def __init__(self):
+    super(E,self).__init__()
+    self.arity = 0
+    self.value = np.e
+    self.pt_value = torch.exp(torch.tensor(1))
+    self.symb = "e"
+
+  def _get_args_repr(self, args):
+    return self.symb
+
+  def get_output(self, X):
+    return self.value
+
+  def get_output_pt(self, X):
+    return self.pt_value
+
+class GravityOfMoon(Node, nn.Module):
+  def __init__(self):
+    super(GravityOfMoon,self).__init__()
+    self.arity = 0
+    self.value = 1.625
+    self.pt_value = torch.tensor([1.625])
+    self.symb = "g_m"
+
+  def _get_args_repr(self, args):
+    return self.symb
+
+  def get_output(self, X):
+    return self.value
+
+  def get_output_pt(self, X):
+    return self.pt_value
