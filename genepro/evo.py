@@ -176,7 +176,7 @@ class Evolution:
       individual.get_readable_repr()
 
     # evaluate the trees and store their fitness
-    fitnesses = Parallel(n_jobs=self.n_jobs)(delayed(self.fitness_function)(t) for t in self.population)
+    fitnesses = Parallel(n_jobs=self.n_jobs)(delayed(self.fitness_function)(t, self.num_gens) for t in self.population)
     fitnesses = list(map(list, zip(*fitnesses)))
     memories = fitnesses[1]
     memory = memories[0]
@@ -217,7 +217,7 @@ class Evolution:
       for t in parents)
 
     # evaluate each offspring and store its fitness 
-    fitnesses = Parallel(n_jobs=self.n_jobs)(delayed(self.fitness_function)(t) for t in offspring_population)
+    fitnesses = Parallel(n_jobs=self.n_jobs)(delayed(self.fitness_function)(t, self.num_gens) for t in self.population)
     if self.save_fitnesses:
       self.write_fitnesses_to_file(fitnesses)
     fitnesses = list(map(list, zip(*fitnesses)))
@@ -241,7 +241,11 @@ class Evolution:
     best = self.population[np.argmax([t.fitness for t in self.population])]
     self.best_of_gens.append(deepcopy(best))
     self.statistics.append({'mean':np.mean(fitnesses), 'median':np.median(fitnesses)})
-
+  
+  def _calc_population_fitness(self) -> int:
+    fitness_sum = sum([t.fitness for t in self.population])
+    return fitness_sum / len(self.population)
+  
   def evolve(self):
     """
     Runs the evolution until a termination criterion is met;
