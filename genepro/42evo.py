@@ -113,6 +113,7 @@ class Evolution:
     n_jobs : int=4,
     log_data : bool=False,
     verbose : bool=False,
+    enable: dict = None,
     ):
 
     # set parameters as attributes
@@ -140,6 +141,10 @@ class Evolution:
     
     # Custom Variables
     self.statistics = list()
+    if self.enable == None:
+      self.enable = {
+        "elite-archive": False,
+      }
 
 
   def _must_terminate(self) -> bool:
@@ -292,12 +297,33 @@ class Evolution:
         
         print(f"\tmean = {stats['mean']:.2f}, \tmedian = {stats['median']:.2f}, \tbest_median = {stats['best_median']:.2f}\n")
 
+
+    dt, _ = datetime.utcnow().strftime('%Y-%m-%d-%H:%M:%S.%f').split('.')
+    
     # Once evolution is done, save the fitnesses to a permanent file including some model parameters on the last line
     if self.log_data:
+<<<<<<< HEAD:genepro/42evo.py
 <<<<<<< HEAD:genepro/evo.py
       dt, _ = datetime.utcnow().strftime('%Y-%m-%d-%H_%M_%S.%f').split('.')
 =======
       dt, _ = datetime.utcnow().strftime('%Y-%m-%d-%H:%M:%S.%f').split('.')
 >>>>>>> 42-symmetry-v2:genepro/42evo.py
+=======
+>>>>>>> 6-elite-archive:genepro/evo.py
       shutil.move('fitnesses.csv', 'fitnesses-'+dt+'.csv')
       shutil.move('gen.csv', 'gen_'+dt+'.csv')
+
+    if self.enable["elite-archive"]:
+      complete_set = self.population + self.best_of_gens
+      fitnesses = []
+      for ind in complete_set:
+        fit_val = self.fitness_function(ind, 0, 10)[0]
+        ind.fitness = fit_val
+        fitnesses.append(fit_val)
+      
+      with open(f'elite_archive-{dt}.csv','a') as file:
+        writer = csv.writer(file, delimiter='\t',lineterminator='\n',)
+        writer.writerow(fitnesses)
+      
+      sorted_population = sorted(complete_set, key=lambda x: x.fitness)
+      self.best_of_gens.append(deepcopy(sorted_population[0]))
