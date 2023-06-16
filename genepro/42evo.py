@@ -294,6 +294,10 @@ class Evolution:
 
     # Once evolution is done, save the fitnesses to a permanent file including some model parameters on the last line
     if self.log_data:
+<<<<<<< HEAD:genepro/evo.py
       dt, _ = datetime.utcnow().strftime('%Y-%m-%d-%H_%M_%S.%f').split('.')
+=======
+      dt, _ = datetime.utcnow().strftime('%Y-%m-%d-%H:%M:%S.%f').split('.')
+>>>>>>> 42-symmetry-v2:genepro/42evo.py
       shutil.move('fitnesses.csv', 'fitnesses-'+dt+'.csv')
       shutil.move('gen.csv', 'gen_'+dt+'.csv')
