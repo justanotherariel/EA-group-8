@@ -212,8 +212,12 @@ class Evolution:
       constraints={"max_tree_size": self.max_tree_size}) 
       for t in parents)
 
-    # evaluate each offspring and store its fitness 
-    fit_out = Parallel(n_jobs=self.n_jobs)(delayed(self.fitness_function)(t, self.num_gens) for t in offspring_population)
+    # evaluate each offspring and store its fitness
+    if self.num_gens == self.max_gens -1:
+      print("Last Generation - Thorough Eval")
+      fit_out = Parallel(n_jobs=self.n_jobs)(delayed(self.fitness_function)(t, self.num_gens, num_episodes=50) for t in offspring_population)
+    else:
+      fit_out = Parallel(n_jobs=self.n_jobs)(delayed(self.fitness_function)(t, self.num_gens) for t in offspring_population)
     fit_out = list(map(list, zip(*fit_out)))
     
     memories = fit_out[1]
